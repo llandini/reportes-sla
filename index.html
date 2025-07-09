@@ -45,7 +45,7 @@
     axios.get('sla_data.json').then(function(response) {
       window.slaData = response.data;
 
-      fetch('mexico_estados.geojson')
+      fetch('mexico_estados.geojson?v=2')
         .then(res => res.json())
         .then(data => {
           L.geoJson(data, { style: style }).addTo(map);
