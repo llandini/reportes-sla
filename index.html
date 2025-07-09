@@ -32,7 +32,7 @@
     }
 
     function style(feature) {
-      const slaData = window.slaData[feature.properties.NOM_ENT] || 0;
+      const slaData = window.slaData[feature.properties.name] || 0;
       return {
         fillColor: getColor(slaData),
         weight: 1,
