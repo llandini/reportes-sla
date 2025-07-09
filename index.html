@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa SLA por Estado</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    #map { height: 95vh; width: 100%; }
+    .legend { background: white; padding: 10px; line-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Cumplimiento SLA por Estado</h2>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet-ajax"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([23.5, -102], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 10,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    function getColor(sla) {
+      return sla >= 0.95 ? '#4CAF50' :
+             sla >= 0.80 ? '#FFC107' :
+             '#F44336';
+    }
+
+    function style(feature) {
+      const slaData = window.slaData[feature.properties.NOM_ENT] || 0;
+      return {
+        fillColor: getColor(slaData),
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0.7
+      };
+    }
+
+    axios.get('sla_data.json').then(function(response) {
+      window.slaData = response.data;
+
+      fetch('mexico_estados.geojson')
+        .then(res => res.json())
+        .then(data => {
+          L.geoJson(data, { style: style }).addTo(map);
+        });
+    });
+
+  </script>
+</body>
+</html>
